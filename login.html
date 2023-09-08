@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Page</title>
+    <link rel="stylesheet" href="../WeatherApp_Inside/css/login.css">
+</head>
+<body>
+    <div class="container">
+        <form class="login-form" method="post">
+             <H1>Weather Forecast</H1>
+            <h2>Please enter following information</h2>
+            <div class="form-group">
+                <label for="username">Username:</label>
+                <input type="text" id="username" name="username" required>
+            </div>
+            <div class="form-group">
+                <label for="password">Password:</label>
+                <div class="password-container">
+                    <input type="password" id="password" name="password" required>
+                    <img src="img/eye_icon.png" id= "eye-pwd" class="toggle-password" onclick="togglePasswordVisibility()"/>
+                </div>
+            </div>
+             <p>Please note, if you haven't registered, please register first.</p>
+            <div class="form-group-button">
+                <button id="btn-login" type="button" onclick="login()">Login</button>
+                <button id="btn-Register" type="submit">Register</button>
+            </div>
+        </form>
+    </div>
+    <script>
+        const image = document.getElementById("eye-pwd");
+        function togglePasswordVisibility() {
+            const passwordField = document.getElementById("password");
+            if (passwordField.type === "password") {
+                 image.src = "img/close-eye.png";
+                passwordField.type = "text";
+            } else {
+                image.src = "img/eye_icon.png";
+                passwordField.type = "password";
+            }
+        }
+
+        const openRegistrationBtn = document.getElementById('btn-Register');
+        openRegistrationBtn.onclick = function () {
+            window.location.href = 'register.html';
+        }
+    </script>
+
+    <script src="https://cdn.staticfile.org/jquery/1.10.2/jquery.min.js"></script>
+    <script>
+        function login(){
+            var username=$("#username").val();
+            var password=$("#password").val();
+            if(username && password){
+                $.ajax({ 
+                    url:"https://9fd9q2q4ok.execute-api.ap-southeast-2.amazonaws.com/v1/users",  
+                    type:'POST', 
+                    headers: {
+                        "Content-Type": "application/x-www-form-urlencoded"
+                    },
+                    data:JSON.stringify({"username":username}),
+                    success: function(data){ 
+                        if(data.statusCode==200){
+                            var user=data.body;
+                            if(user.password==password){
+                                window.localStorage.setItem("user",JSON.stringify(user));
+                                alert("Login successful!");
+                                window.location.href="./index.html";
+                            }else{
+                                alert("Password error!");
+                            }
+                        }else{
+                            alert(data.message);
+                        }
+                    },
+                    error:function(data){
+                        console.log(data);
+                    }
+                }); 
+            }else{
+                alert("The login information cannot be empty!");
+            }
+        }
+
+      
+       
+    </script>
+</body>
+</html>
